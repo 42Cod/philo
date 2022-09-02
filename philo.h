@@ -6,22 +6,23 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:28:13 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/01 15:56:03 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/02 10:24:33 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-# define FORK "%lld %d has taken a fork\n"
-# define EAT "%lld %d is eating\n"
-# define SLEEP "%lld %d is sleeping\n"
-# define THINK "%lld %d is thinking\n"
-# define DEAD "%lld %d died\n"
-# define GOAL "%lld ms | Goal reached! %d meals\n"
-# define HELP "Error.\n./philo num_philos tt_die tt_eat tt_sleep [goal]\n"
+# define FORK	"%lld %d has taken a fork\n"
+# define EAT	"%lld %d is eating\n"
+# define SLEEP	"%lld %d is sleeping\n"
+# define THINK	"%lld %d is thinking\n"
+# define DEAD	"%lld %d died\n"
+# define GOAL	"%lld ms | Goal reached! %d meals\n"
+# define HELP	"Input not valid!\n"
 # define THERR	"Error creating threads."
 # define MEMERR	"Error allocating memory."
+# define RED	"\033[31m"
 
 # include <stdbool.h>
 # include <stddef.h>
@@ -83,5 +84,6 @@ void		output(t_philos *philos, int flg);
 void		allocation(t_philos *philos);
 void 		take_one_fork(t_philos *philos);
 void		take_forks(t_philos *philos);
+void		die(t_philos *philos);
 
 #endif

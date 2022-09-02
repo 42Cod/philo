@@ -12,18 +12,31 @@
 
 #include "philo.h"
 
+void	die(t_philos *philos)
+{
+	pthread_mutex_lock(philos->data->forks);
+	if (get_time() - philos->last_meal > philos->data->time_to_die)
+	{
+		philos->data->ph_dead = true;
+		output(philos, 4);
+	}
+	pthread_mutex_unlock(philos->data->forks);
+}
+
 void	eating(t_philos *philos)
 {
-	take_forks(philos);
+	pthread_mutex_lock(philos->l_fork);
+	output(philos, 0);
+	pthread_mutex_unlock(philos->l_fork);
+	pthread_mutex_lock(philos->r_fork);
+	output(philos, 0);
+	pthread_mutex_unlock(philos->r_fork);
+	output(philos, 1);
 	philos->data->ph_n_meal++;
 	philos->last_meal = get_time();
-	pthread_mutex_lock(philos->l_fork);
-	pthread_mutex_lock(philos->r_fork);
-	output(philos, 1);
-	pthread_mutex_unlock(philos->l_fork);
-	pthread_mutex_unlock(philos->r_fork);
 	sleep_ms(philos->data->time_to_eat);
 	philos->status = sleeping;
+	die(philos);
 	// if (!philos->thread)
 	// 	return_forks(philos, 0);
 	// else
@@ -34,16 +47,17 @@ void	routine_helper(int status, t_philos *philos)
 {
 	if (status == sleeping)
 	{
-		eating(philos);
-		output(philos, 2);
+		eating(philos); //eating
+		output(philos, 2); //sleeping
 		philos->status = thinking;
+		output(philos, 3); //thinking
 		sleep_ms(philos->data->time_to_sleep);
-		output(philos, 3);
+		philos->status = sleeping;
 	}
-	if (status == lonely)
+	if (status == lonely) //just one
 	{
-		take_one_fork(philos);
-		output(philos, 0);
+		// take_one_fork(philos);
+		// output(philos, 0);
 		pthread_mutex_lock(&philos->data->print_mutex);
 		output(philos, 4);
 		pthread_mutex_unlock(&philos->data->print_mutex);
@@ -65,6 +79,7 @@ void	*routine(void *param)
 		sleep_ms(philos->data->time_to_die);
 	while(philos->data->ph_dead == false)
 	{
+		// printf("hahah\n");
 		if (philos->status == lonely)
 			routine_helper(lonely, philos);
 		if (philos->status == sleeping)

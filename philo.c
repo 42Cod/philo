@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:26:57 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/01 14:49:58 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:49:25 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	create_philos(t_philos *philos)
 
 int main(int argc, char **argv)
 {
-	t_philos  *philos;
+	t_philos  *philos = NULL;
 
 	if (argc == 5 || argc == 6)
 	{
@@ -76,5 +76,5 @@ int main(int argc, char **argv)
 		creation(philos);
 		cleaning(philos, 1);
 	}
-	// cleaning(philos, 0);
+	cleaning(philos, 0);
 }

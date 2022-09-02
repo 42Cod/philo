@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:32:06 by nmichael          #+#    #+#             */
-/*   Updated: 2022/08/31 18:48:34 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/02 11:37:23 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,7 @@ int	ft_atoi2(t_philos *philos, char *str)
 		i++;
 	}
 	if (ft_isdigit(str[i - 1]) == 0 || str[i] != '\0' || r > INT_MAX)
-	{
-		cleaning(philos, 1);
-	}
+		cleaning(philos, 0);
 	return (r);
 }
 
@@ -70,6 +68,7 @@ void	init(t_philos *philos, int argc, char **argv)
 	i = 0;
 	philos->data = malloc(sizeof(t_data));
 	philos->data->numb = ft_atoi2(philos, argv[1]);
+	printf("numbbb: %d", philos->data->numb);
 	philos->data->time_to_die = ft_atoi2(philos, argv[2]);
 	philos->data->time_to_eat = ft_atoi2(philos, argv[3]);
 	philos->data->time_to_sleep = ft_atoi2(philos, argv[4]);
