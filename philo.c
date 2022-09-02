@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:26:57 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/01 17:49:25 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/02 11:55:03 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void	create_philos(t_philos *philos)
 			philos[i].l_fork = &philos->data->forks[i + 1];
 		philos[i].r_fork = &philos->data->forks[i];
 	}
-	printf("herehuhu\n");
 }
 
 int main(int argc, char **argv)

@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:28:13 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/02 10:24:33 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/02 12:37:25 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ enum e_status {
 	thinking = 0,
 	sleeping = 1,
 	waiting = 2,
-	lonely = 3
+	lonely = 3,
+	ate = 4
 };
 
 typedef struct s_data

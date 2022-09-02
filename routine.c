@@ -35,8 +35,8 @@ void	eating(t_philos *philos)
 	philos->data->ph_n_meal++;
 	philos->last_meal = get_time();
 	sleep_ms(philos->data->time_to_eat);
-	philos->status = sleeping;
 	die(philos);
+	philos->status = ate;
 	// if (!philos->thread)
 	// 	return_forks(philos, 0);
 	// else
@@ -48,10 +48,16 @@ void	routine_helper(int status, t_philos *philos)
 	if (status == sleeping)
 	{
 		eating(philos); //eating
-		output(philos, 2); //sleeping
-		philos->status = thinking;
-		output(philos, 3); //thinking
-		sleep_ms(philos->data->time_to_sleep);
+		if (philos->status == ate)
+		{
+			output(philos, 2); //sleeping
+			philos->status = thinking;
+		}
+		if(philos->status == thinking)
+		{
+			output(philos, 3); //thinking
+			sleep_ms(philos->data->time_to_sleep);
+		}
 		philos->status = sleeping;
 	}
 	if (status == lonely) //just one
@@ -60,6 +66,7 @@ void	routine_helper(int status, t_philos *philos)
 		// output(philos, 0);
 		pthread_mutex_lock(&philos->data->print_mutex);
 		output(philos, 4);
+		printf("wha22t\n");
 		pthread_mutex_unlock(&philos->data->print_mutex);
 		sleep_ms(philos->data->time_to_sleep);
 		philos->data->ph_dead = true;
@@ -79,7 +86,6 @@ void	*routine(void *param)
 		sleep_ms(philos->data->time_to_die);
 	while(philos->data->ph_dead == false)
 	{
-		// printf("hahah\n");
 		if (philos->status == lonely)
 			routine_helper(lonely, philos);
 		if (philos->status == sleeping)
