@@ -57,8 +57,8 @@ void	routine_helper(int status, t_philos *philos)
 		{
 			output(philos, 3); //thinking
 			sleep_ms(philos->data->time_to_sleep);
+			philos->status = sleeping;
 		}
-		philos->status = sleeping;
 	}
 	if (status == lonely) //just one
 	{
@@ -80,10 +80,12 @@ void	*routine(void *param)
 
 	i = 0;
 	philos = param;
+	printf("philo id: %d\n", philos->id);
 	while(philos->data->flag_done == 1)
 		usleep(1);
 	if (philos->data->numb % 2)
-		sleep_ms(philos->data->time_to_die);
+		sleep_ms(philos->data->time_to_eat - 1);
+	printf("philo id: %d\n", philos->id);
 	while(philos->data->ph_dead == false)
 	{
 		if (philos->status == lonely)

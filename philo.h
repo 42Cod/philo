@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:28:13 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/02 12:37:25 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/02 13:18:15 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,13 @@ typedef struct s_data
 	int				flag_done;
 	int				n_thread;
 	pthread_mutex_t	print_mutex;
-	pthread_mutex_t	*forks;
+	pthread_mutex_t	*forks; // einmal fuur alle allocaten adann l und r auf diese pointen lassen 
+	t_philos		*philos;
 }					t_data;
 
 typedef struct s_philos
 {
-	pthread_t		*thread;
+	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
 	int				id;

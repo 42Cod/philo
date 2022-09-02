@@ -6,28 +6,28 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:26:57 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/02 11:55:03 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/02 13:20:18 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	creation(t_philos *philos)
+static void	creation(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	philos->data->starting_time = get_time();
-	philos->data->flag_done = 1;
-	pthread_mutex_init(philos->data->forks, NULL);
-	while (i < philos->data->numb)
+	data->starting_time = get_time();
+	data->flag_done = 1;
+	pthread_mutex_init(data->forks, NULL);
+	while (i < data->numb)
 	{
-		philos->id = i;
-		pthread_create(&philos->thread[i], NULL, &routine, philos);
+		data->philos[i]->id = i;
+		pthread_create(&data->philos[i]->thread, NULL, &routine, data->philos[i]);
 		usleep(100);
 		i++;
 	}
-	philos->data->flag_done = 0;
+	data->flag_done = 0;
 	i = 0;
 	while (i <= philos->data->numb)
 	{
@@ -38,14 +38,15 @@ static void	creation(t_philos *philos)
 	return ;
 }
 
-void	create_philos(t_philos *philos)
+void	create_philos(t_philos *philos)// alles ändern von structure, philos immer mit i
 {
 	int	i;
 
 	i = - 1;
+	
 	if (philos->data->numb == 1)
 		philos->status = lonely;
-	philos->l_fork = calloc((philos->data->numb), sizeof(pthread_mutex_t));
+	philos->l_fork = calloc((philos->data->numb), sizeof(pthread_mutex_t)); //while allocaten jede gabel
 	philos->r_fork = calloc((philos->data->numb), sizeof(pthread_mutex_t));
 	while(++i < philos->data->numb)
 	{
@@ -53,7 +54,7 @@ void	create_philos(t_philos *philos)
 			philos->status = lonely;
 		else
 			philos->status = sleeping;
-		pthread_mutex_init(&philos->data->forks[i], NULL);
+		pthread_mutex_init(&data->forks[i], NULL);
 		philos[i].id = i;
 		if (i == philos->data->numb - 1)
 			philos[i].l_fork = &philos->data->forks[0];
