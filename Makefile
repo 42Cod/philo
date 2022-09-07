@@ -14,7 +14,7 @@ NAME = Philo
 
 SRC = ./philo.c ./routine.c ./utils.c ./init.c ./cleaner.c
 
-CC = cc -Wall -Werror -Wextra #-fsanitize=address
+CC = cc -Wall -Werror -Wextra -fsanitize=address
 
 OBJ = $(SRC:c=o)
 

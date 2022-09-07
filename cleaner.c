@@ -12,9 +12,9 @@
 
 #include "philo.h"
 
-void	free_mem(t_philos *philos)
+void	free_mem(t_data *data)
 {
-	(void)philos;
+	(void)data;
 	// if (philos->data->forks)
 	// 	free(philos->data->forks);
 	// if (philos->thread)
@@ -29,14 +29,14 @@ void	free_mem(t_philos *philos)
 	exit(0);
 }
 
-void	cleaning(t_philos *philos, int flag)
+void	cleaning(t_data *data, int flag)
 {
 	if (flag == 0)
 	{
 		printf(HELP);
 		exit (EXIT_FAILURE);
 	}
-	free_mem(philos);
+	free_mem(data);
 	if (flag == 3)
 	{
 		printf(THERR);

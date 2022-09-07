@@ -12,86 +12,150 @@
 
 #include "philo.h"
 
-void	die(t_philos *philos)
+// void	die(t_data *data)
+// {
+// 	pthread_mutex_lock(data->forks);
+// 	if (get_time() - data->philos->last_meal > data->time_to_die)
+// 	{
+// 		data->ph_dead = true;
+// 		output(data, 4);
+// 	}
+// 	pthread_mutex_unlock(data->forks);
+// }
+
+// void	eating(t_data *data)
+// {
+// 	pthread_mutex_lock(data->philos->l_fork);
+// 	output(data, 0);
+// 	pthread_mutex_unlock(data->philos->l_fork);
+// 	pthread_mutex_lock(data->philos->r_fork);
+// 	output(data, 0);
+// 	pthread_mutex_unlock(data->philos->r_fork);
+// 	output(data, 1);
+// 	data->ph_n_meal++;
+// 	data->philos->last_meal = get_time();
+// 	sleep_ms(data->time_to_eat);
+// 	die(data);
+// 	data->philos->status = ate;
+// 	// if (!philos->thread)
+// 	// 	return_forks(philos, 0);
+// 	// else
+// 	// 	return_forks(philos, philos->id);
+// }
+
+// void	routine_helper(int status, t_data *data)
+// {
+// 	if (status == sleeping)
+// 	{
+// 		eating(data); //eating
+// 		if (data->philos->status == ate)
+// 		{
+// 			output(data, 2); //sleeping
+// 			data->philos->status = thinking;
+// 		}
+// 		if(data->philos->status == thinking)
+// 		{
+// 			output(data, 3); //thinking
+// 			sleep_ms(data->time_to_sleep);
+// 			data->philos->status = sleeping;
+// 		}
+// 	}
+// 	if (status == lonely) //just one
+// 	{
+// 		// take_one_fork(philos);
+// 		// output(philos, 0);
+// 		pthread_mutex_lock(&data->print_mutex);
+// 		output(data, 4);
+// 		pthread_mutex_unlock(&data->print_mutex);
+// 		sleep_ms(data->time_to_sleep);
+// 		data->ph_dead = true;
+// 	}
+// }
+
+void	checker(t_data *data)
 {
-	pthread_mutex_lock(philos->data->forks);
-	if (get_time() - philos->last_meal > philos->data->time_to_die)
+	if ((get_useconds() - data->philos->last_meal) / 1000 > \
+	(size_t)data->time_to_die)
 	{
-		philos->data->ph_dead = true;
-		output(philos, 4);
+		data->ph_end = 1;
+		output(data, 4);
 	}
-	pthread_mutex_unlock(philos->data->forks);
 }
 
-void	eating(t_philos *philos)
+void	check_philos_death(t_data *data)
 {
-	pthread_mutex_lock(philos->l_fork);
-	output(philos, 0);
-	pthread_mutex_unlock(philos->l_fork);
-	pthread_mutex_lock(philos->r_fork);
-	output(philos, 0);
-	pthread_mutex_unlock(philos->r_fork);
-	output(philos, 1);
-	philos->data->ph_n_meal++;
-	philos->last_meal = get_time();
-	sleep_ms(philos->data->time_to_eat);
-	die(philos);
-	philos->status = ate;
-	// if (!philos->thread)
-	// 	return_forks(philos, 0);
-	// else
-	// 	return_forks(philos, philos->id);
+	int	i;
+
+	while (!data->ph_end)
+	{
+		ft_usleep(2000);
+		i = 0;
+		while (!data->ph_end && i < data->numb)
+		{
+			checker(data);
+			i++;
+		}
+	}
+	return ;
 }
 
-void	routine_helper(int status, t_philos *philos)
+void	eat(t_data *data)
 {
-	if (status == sleeping)
+	while (1)
 	{
-		eating(philos); //eating
-		if (philos->status == ate)
+		if (philo->info->fork_status[philo->r_fork] == FREE)
 		{
-			output(philos, 2); //sleeping
-			philos->status = thinking;
+			pthread_mutex_lock(&philo->info->forks[philo->r_fork]);
+			philo->info->fork_status[philo->r_fork] = LOCK;
+			output(data, 0);
+			pthread_mutex_lock(&philo->info->forks[philo->l_fork]);
+			philo->info->fork_status[philo->l_fork] = LOCK;
+			output(data, 0);
+			philo->last_meal = get_useconds();
+			output(data, 1);
+			check_philo_must_eat(philo);
+			sleep_ms(data->time_to_eat);
+			philo->info->fork_status[philo->r_fork] = FREE;
+			philo->info->fork_status[philo->l_fork] = FREE;
+			pthread_mutex_unlock(&philo->info->forks[philo->r_fork]);
+			pthread_mutex_unlock(&philo->info->forks[philo->l_fork]);
+			break ;
 		}
-		if(philos->status == thinking)
-		{
-			output(philos, 3); //thinking
-			sleep_ms(philos->data->time_to_sleep);
-			philos->status = sleeping;
-		}
+		else
+			usleep(100);
 	}
-	if (status == lonely) //just one
-	{
-		// take_one_fork(philos);
-		// output(philos, 0);
-		pthread_mutex_lock(&philos->data->print_mutex);
-		output(philos, 4);
-		printf("wha22t\n");
-		pthread_mutex_unlock(&philos->data->print_mutex);
-		sleep_ms(philos->data->time_to_sleep);
-		philos->data->ph_dead = true;
-	}
+}
+void	sleep(t_data *data)
+{
+	output(data, 3);
+	sleep_ms(data->time_to_sleep);
+	data->philos->status = sleeping;
+}
+void	think(t_data *data)
+{
+	output(data, 2);
+	data->philos->status = thinking;
 }
 
 void	*routine(void *param)
 {
-	t_philos  *philos;
-	int       i;
+	t_data	*data;
+	int	i;
 
 	i = 0;
-	philos = param;
-	printf("philo id: %d\n", philos->id);
-	while(philos->data->flag_done == 1)
+	data = param;
+	while(data->flag_done == 1)
 		usleep(1);
-	if (philos->data->numb % 2)
-		sleep_ms(philos->data->time_to_eat - 1);
-	printf("philo id: %d\n", philos->id);
-	while(philos->data->ph_dead == false)
+	if (data->numb % 2)
+		sleep_ms(data->time_to_eat - 1);
+	while(data->ph_dead == false)
 	{
-		if (philos->status == lonely)
-			routine_helper(lonely, philos);
-		if (philos->status == sleeping)
-			routine_helper(sleeping, philos);
+		eat(data);
+		check_philos_death(data);
+		sleep(data);
+		check_philos_death(data);
+		think(data);
+		check_philos_death(data);
 	}
     return (NULL);
 }

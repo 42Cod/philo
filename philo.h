@@ -42,6 +42,16 @@ enum e_status {
 	ate = 4
 };
 
+typedef struct s_philos
+{
+	pthread_t		thread;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	*r_fork;
+	int				id;
+	int				last_meal;
+	int				status;
+}					t_philos;
+
 typedef struct s_data
 {
 	int				numb;
@@ -62,30 +72,23 @@ typedef struct s_data
 	t_philos		*philos;
 }					t_data;
 
-typedef struct s_philos
-{
-	pthread_t		thread;
-	pthread_mutex_t	*l_fork;
-	pthread_mutex_t	*r_fork;
-	int				id;
-	int				last_meal;
-	int				status;
-	t_data			*data;
-}					t_philos;
-
 int			main(int argc, char **argv);
-void		create_philos(t_philos *philos);
-void		init(t_philos *philos, int argc, char **argv);
-int			ft_atoi2(t_philos *philos, char *str);
-void		cleaning(t_philos *philos, int flag);
-void		free_mem(t_philos *philos);
+void		create_philos(t_data
+ *data);
+void		init(t_data *data, int argc, char **argv);
+int			ft_atoi2(t_data *data, char *str);
+void		free_mem(t_data *data);
 long long	get_time(void);
 void		sleep_ms(long long ms);
 void		*routine(void *param);
-void		output(t_philos *philos, int flg);
-void		allocation(t_philos *philos);
-void 		take_one_fork(t_philos *philos);
-void		take_forks(t_philos *philos);
-void		die(t_philos *philos);
+void		output(t_data *data, int flg);
+void		allocation(t_data *data);
+void 		take_one_fork(t_data *data);
+void		take_forks(t_data *data);
+void		die(t_data *data);
+void		cleaning(t_data *data, int flag);
+void		check_philos_death(t_data *data);
+void		checker(t_data *data);
+
 
 #endif

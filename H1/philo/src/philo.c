@@ -45,7 +45,7 @@ void	philo_eat(t_philo *philo)
 			pthread_mutex_unlock(&philo->info->forks[philo->r_fork]);
 			pthread_mutex_unlock(&philo->info->forks[philo->l_fork]);
 			break ;
-		}
+ e		}
 		else
 			usleep(100);
 	}
