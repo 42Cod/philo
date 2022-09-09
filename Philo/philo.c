@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:26:57 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/02 13:20:18 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/09 13:28:59 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,7 @@ static	void	init_mtx_frks(t_data *data)
 	while (i < data->numb)
 	{
 		if (pthread_mutex_init(&data->forks[i], NULL))
-		{
 			write(2, "Init mutex error\n", 18);
-		}
 		i++;
 	}
 }
@@ -46,15 +44,31 @@ static void	creation(t_data *data)
 	i = 0;
 	data->starting_time = get_time();
 	data->flag_done = 1;
+	data->philos->ph_n_meal = 0;
 	init_mtx_frks(data);
 	while (i < data->numb)
 	{
 		data->philos[i].id = i;
-		pthread_create(&data->philos[i].thread, NULL, routine, &data->philos[i]);
+		data->philos[i].data = data;
+		if (i % 2)
+			pthread_create(&data->philos[i].thread, NULL,
+				routine, &data->philos[i]);
+		else
+			pthread_create(&data->philos[i].thread, NULL,
+				routine1, &data->philos[i]);
 		usleep(50);
 		i++;
 	}
 	data->flag_done = 0;
+	i = 0;
+	usleep(100);
+	while(data->ph_dead == false)
+	{
+		checker(&data->philos[i]);
+		i++;
+		if (i < data->numb)
+			i = 0;
+	}
 	i = 0;
 	while (i <= data->numb)
 	{
@@ -70,10 +84,9 @@ void	create_philos(t_data *data)
 	int	i;
 
 	i = -1;
-	
 	if (data->numb == 1)
 		data->philos->status = lonely;
-	while(++i < data->numb)
+	while (++i < data->numb)
 	{
 		data->philos[i].l_fork = calloc((data->numb), sizeof(pthread_mutex_t));
 		data->philos[i].r_fork = calloc((data->numb), sizeof(pthread_mutex_t));
@@ -91,10 +104,11 @@ void	create_philos(t_data *data)
 	}
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_data  *data = NULL;
+	t_data	*data;
 
+	data = NULL;
 	if (argc == 5 || argc == 6)
 	{
 		data = malloc(sizeof(t_data));

@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:32:06 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/02 11:55:16 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/08 13:50:44 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,6 @@ void	allocation(t_data *data)
 	data->forks = calloc((data->numb), sizeof(pthread_mutex_t));
 	if (!data->forks)
 		cleaning(data, 2);
-	// philos->data->ph_n_meal = calloc((philos->data->numb), sizeof(int));
-	// if (!philos->data->ph_n_meal)
-	// 	cleaning(philos, 2);
-	// philos->data->ph_end = calloc((philos->data->numb), sizeof(bool));
-	// if (!philos->data->ph_end)
-	// 	cleaning(philos, 2);
-	// philos->data->ph_n_meal = calloc((philos->data->numb), sizeof(int));
-	// if (!philos->data->ph_n_meal)
-	// 	cleaning(philos, 2);
-	// philos->data->ph_end = calloc((philos->data->numb), sizeof(bool));
-	// if (!philos->data->ph_end)
-	// 	cleaning(philos, 2);
 }
 
 static int	ft_isdigit(int c)
@@ -64,7 +52,7 @@ int	ft_atoi2(t_data *data, char *str)
 
 void	init(t_data *data, int argc, char **argv)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	data->numb = ft_atoi2(data, argv[1]);
@@ -74,7 +62,7 @@ void	init(t_data *data, int argc, char **argv)
 	if (argc == 6)
 		data->six_c = ft_atoi2(data, argv[5]);
 	else
-		data->six_c = -1;
+		data->six_c = 1000000;
 	allocation(data);
 	data->ph_done = 0;
 	data->ph_dead = false;
