@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:26:57 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/09 13:28:59 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/09 13:38:46 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	creation(t_data *data)
 	data->flag_done = 0;
 	i = 0;
 	usleep(100);
-	while(data->ph_dead == false)
+	while(data->ph_dead == false  && data->numb < 1)
 	{
 		checker(&data->philos[i]);
 		i++;
