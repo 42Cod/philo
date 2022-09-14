@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 16:03:18 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/02 11:35:45 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/09 13:25:02 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,41 +40,31 @@ void	output(t_philos *philos, int flg)
 
 	pthread_mutex_lock(&philos->data->print_mutex);
 	if (!philos->data->ph_dead && flg == 0)
-		printf("time: %lld | %d has taken a fork\n", timestamp, philos->id + 1);
+		printf("time: %lld | %d has taken a fork\n",
+			timestamp, philos->id + 1);
 	else if (!philos->data->ph_dead && flg == 1)
-		printf("time: %lld | %d is eating\n", timestamp, philos->id + 1);
+		printf("time: %lld | %d is eating\n",
+			timestamp, philos->id + 1);
 	else if (!philos->data->ph_dead && flg == 2)
-		printf("time: %lld | %d is sleeping\n", timestamp, philos->id + 1);
+		printf("time: %lld | %d is sleeping\n", timestamp,
+			philos->id + 1);
 	else if (!philos->data->ph_dead && flg == 3)
-		printf("time: %lld | %d is thinking\n", timestamp, philos->id + 1);
+		printf("time: %lld | %d is thinking\n", timestamp,
+			philos->id + 1);
 	else if (flg == 4)
-		printf(RED "time: %lld | Philosopher %d died\n", timestamp, philos->id + 1);
+		printf(RED "time: %lld | Philosopher %d died\n",
+			timestamp, philos->id + 1);
 	pthread_mutex_unlock(&philos->data->print_mutex);
 }
 
-// void return_forks(t_philos *philos)
-// {
-	
-// }
-
-void take_one_fork(t_philos *philos)
+void	sleepi(t_philos *philos)
 {
-
-	pthread_mutex_lock(philos->data->forks);
-	pthread_mutex_unlock(philos->data->forks);
-	usleep(50);
+	output(philos, 2);
+	if (philos->data->ph_dead != true)
+		sleep_ms(philos->data->time_to_sleep);
 }
 
-void	take_forks(t_philos *philos)
+void	think(t_philos *philos)
 {
- 	// take_one_fork(philos);
-	pthread_mutex_lock(philos->data->forks);
-	output(philos, 0);
-	pthread_mutex_unlock(philos->data->forks);
-	take_one_fork(philos);
-	pthread_mutex_lock(philos->data->forks);
-	pthread_mutex_lock(&philos->data->print_mutex);
-	output(philos, 0);
-	pthread_mutex_unlock(&philos->data->print_mutex);
-	pthread_mutex_unlock(philos->data->forks);
+	output(philos, 3);
 }

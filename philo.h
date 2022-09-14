@@ -6,7 +6,7 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:28:13 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/02 13:18:15 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/09 13:14:04 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,18 @@ enum e_status {
 	ate = 4
 };
 
+typedef struct s_philos //thread erstellen und durchloopen und heccken ob die
+{
+	pthread_t		thread;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	*r_fork;
+	int				id;
+	long long		last_meal;
+	int				status;
+	struct s_data	*data;
+	int				ph_n_meal;
+}					t_philos;
+
 typedef struct s_data
 {
 	int				numb;
@@ -51,41 +63,36 @@ typedef struct s_data
 	long long		time_to_sleep;
 	int				six_c;
 	long long		ph_ttd;
-	int				ph_n_meal;
 	bool			ph_end;
 	bool			ph_dead;
 	int				ph_done;
 	int				flag_done;
 	int				n_thread;
 	pthread_mutex_t	print_mutex;
-	pthread_mutex_t	*forks; // einmal fuur alle allocaten adann l und r auf diese pointen lassen 
+	pthread_mutex_t	*forks;
 	t_philos		*philos;
 }					t_data;
 
-typedef struct s_philos
-{
-	pthread_t		thread;
-	pthread_mutex_t	*l_fork;
-	pthread_mutex_t	*r_fork;
-	int				id;
-	int				last_meal;
-	int				status;
-	t_data			*data;
-}					t_philos;
-
 int			main(int argc, char **argv);
-void		create_philos(t_philos *philos);
-void		init(t_philos *philos, int argc, char **argv);
-int			ft_atoi2(t_philos *philos, char *str);
-void		cleaning(t_philos *philos, int flag);
-void		free_mem(t_philos *philos);
+void		create_philos(t_data *data);
+void		init(t_data *data, int argc, char **argv);
+int			ft_atoi2(t_data *data, char *str);
+void		free_mem(t_data *data);
 long long	get_time(void);
 void		sleep_ms(long long ms);
 void		*routine(void *param);
 void		output(t_philos *philos, int flg);
-void		allocation(t_philos *philos);
-void 		take_one_fork(t_philos *philos);
-void		take_forks(t_philos *philos);
-void		die(t_philos *philos);
+void		allocation(t_data *data);
+void		take_one_fork(t_data *data);
+void		take_forks(t_data *data);
+void		die(t_data *data);
+void		cleaning(t_data *data, int flag);
+void		eat(t_philos *philos);
+void		sleepi(t_philos *philos);
+void		think(t_philos *philos);
+void		checker(t_philos *philos);
+void		*routine1(void *param);
+void		sleep_ms2(long long ms, t_philos *philos);
+void		checker2(t_data *data);
 
 #endif

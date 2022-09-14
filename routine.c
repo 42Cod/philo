@@ -1,97 +1,107 @@
-// /* ************************************************************************** */
-// /*                                                                            */
-// /*                                                        :::      ::::::::   */
-// /*   routine.c                                          :+:      :+:    :+:   */
-// /*                                                    +:+ +:+         +:+     */
-// /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
-// /*                                                +#+#+#+#+#+   +#+           */
-// /*   Created: 2022/08/24 15:50:34 by nmichael          #+#    #+#             */
-// /*   Updated: 2022/08/26 11:08:20 by nmichael         ###   ########.fr       */
-// /*                                                                            */
-// /* ************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/07 17:55:29 by nmichael          #+#    #+#             */
+/*   Updated: 2022/09/09 13:30:02 by nmichael         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo.h"
 
-void	die(t_philos *philos)
+void	checker(t_philos *philos)
 {
-	pthread_mutex_lock(philos->data->forks);
-	if (get_time() - philos->last_meal > philos->data->time_to_die)
+	if ((get_time() - philos->last_meal > philos->data->time_to_die))
 	{
-		philos->data->ph_dead = true;
+		philos->data->ph_end = 1;
 		output(philos, 4);
+		philos->data->ph_dead = true;
+		exit(0);
 	}
-	pthread_mutex_unlock(philos->data->forks);
 }
 
-void	eating(t_philos *philos)
+void	eat(t_philos *philos)
 {
 	pthread_mutex_lock(philos->l_fork);
-	output(philos, 0);
-	pthread_mutex_unlock(philos->l_fork);
 	pthread_mutex_lock(philos->r_fork);
 	output(philos, 0);
-	pthread_mutex_unlock(philos->r_fork);
+	output(philos, 0);
 	output(philos, 1);
-	philos->data->ph_n_meal++;
 	philos->last_meal = get_time();
+	philos->ph_n_meal++;
+	philos->data->philos->status = ate;
 	sleep_ms(philos->data->time_to_eat);
-	die(philos);
-	philos->status = ate;
-	// if (!philos->thread)
-	// 	return_forks(philos, 0);
-	// else
-	// 	return_forks(philos, philos->id);
-}
-
-void	routine_helper(int status, t_philos *philos)
-{
-	if (status == sleeping)
-	{
-		eating(philos); //eating
-		if (philos->status == ate)
-		{
-			output(philos, 2); //sleeping
-			philos->status = thinking;
-		}
-		if(philos->status == thinking)
-		{
-			output(philos, 3); //thinking
-			sleep_ms(philos->data->time_to_sleep);
-			philos->status = sleeping;
-		}
-	}
-	if (status == lonely) //just one
-	{
-		// take_one_fork(philos);
-		// output(philos, 0);
-		pthread_mutex_lock(&philos->data->print_mutex);
-		output(philos, 4);
-		printf("wha22t\n");
-		pthread_mutex_unlock(&philos->data->print_mutex);
-		sleep_ms(philos->data->time_to_sleep);
-		philos->data->ph_dead = true;
-	}
+	pthread_mutex_unlock(philos->l_fork);
+	pthread_mutex_unlock(philos->r_fork);
+	if (philos->ph_n_meal > philos->data->six_c)
+		philos->status = waiting;
 }
 
 void	*routine(void *param)
 {
-	t_philos  *philos;
-	int       i;
+	t_philos	*philos;
+	int			i;
 
+	philos = (t_philos *)param;
+	philos->last_meal = get_time();
 	i = 0;
-	philos = param;
-	printf("philo id: %d\n", philos->id);
-	while(philos->data->flag_done == 1)
+	while (philos->data->flag_done == 1)
 		usleep(1);
-	if (philos->data->numb % 2)
-		sleep_ms(philos->data->time_to_eat - 1);
-	printf("philo id: %d\n", philos->id);
-	while(philos->data->ph_dead == false)
+	if (philos->status == lonely) //wieso kommt manchmal zeit bei taken a fork
 	{
-		if (philos->status == lonely)
-			routine_helper(lonely, philos);
-		if (philos->status == sleeping)
-			routine_helper(sleeping, philos);
+		pthread_mutex_lock(philos->l_fork);
+		pthread_mutex_unlock(philos->l_fork);
+		// usleep(50);
+		output(philos, 0);
+		sleep_ms(philos->data->time_to_die);
+		philos->data->ph_dead = true;
+		checker(philos);
+		output(philos, 4);
+		exit(0);
 	}
-    return (NULL);
+	while (philos->data->ph_dead == false && philos->status != waiting)
+	{
+		eat(philos);
+		if (philos->status != waiting) //wieso kommt manchmal zeit
+		{
+			sleepi(philos);
+			think(philos);
+		}
+	}
+	return (NULL);
+}
+
+void	*routine1(void *param)
+{
+	t_philos	*philos;
+	int			i;
+
+	philos = (t_philos *)param;
+	philos->last_meal = get_time();
+	i = 0;
+	while (philos->data->flag_done == 1)
+		usleep(1);
+	if (philos->status == lonely) //wieso kommt manchmal zeit bei taken a fork
+	{
+		pthread_mutex_lock(philos->l_fork);
+		pthread_mutex_unlock(philos->l_fork);
+		// usleep(50);
+		output(philos, 0);
+		sleep_ms(philos->data->time_to_die);
+		philos->data->ph_dead = true;
+		checker(philos);
+		output(philos, 4);
+		exit(0);
+	}
+	while (philos->data->ph_dead == false && philos->status != waiting)
+	{
+		think(philos);
+		eat(philos);
+		if (philos->status != waiting)
+			sleepi(philos);
+	}
+	return (NULL);
 }
