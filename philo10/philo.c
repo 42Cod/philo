@@ -6,13 +6,13 @@
 /*   By: nmichael <nmichael@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/24 11:26:57 by nmichael          #+#    #+#             */
-/*   Updated: 2022/09/15 11:21:50 by nmichael         ###   ########.fr       */
+/*   Updated: 2022/09/16 17:34:58 by nmichael         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static	void	init_mtx_frks(t_data *data)
+void	init_mtx_frks(t_data *data)
 {
 	int	i;
 
@@ -25,7 +25,7 @@ static	void	init_mtx_frks(t_data *data)
 	}
 }
 
-static void	destroy_mtx_frks(t_data *data)
+void	destroy_mtx_frks(t_data *data)
 {
 	int	i;
 
@@ -37,13 +37,12 @@ static void	destroy_mtx_frks(t_data *data)
 	}
 }
 
-static void	creation(t_data *data)
+void	creation(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	data->starting_time = get_time();
-	data->flag_done = 1;
+	data->flag_done = false;
 	data->philos->ph_n_meal = 0;
 	init_mtx_frks(data);
 	while (i < data->numb)
@@ -56,26 +55,12 @@ static void	creation(t_data *data)
 		else
 			pthread_create(&data->philos[i].thread, NULL,
 				routine, &data->philos[i]);
-		usleep(50);
+		//usleep(700);
 		i++;
 	}
-	data->flag_done = 0;
-	i = 0;
-	usleep(100);
-	while(data->ph_dead == false && data->numb > 1)
-	{
-		checker(&data->philos[i]);
-		i++;
-		if (i < data->numb)
-			i = 0;
-	}
-	i = 0;
-	while (i <= data->numb)
-	{
-		pthread_join(&data->philos->thread[i], NULL);
-		i++;
-	}
-	destroy_mtx_frks(data);
+	data->flag_done = true;
+	usleep(1500);
+	helper1(data);
 	return ;
 }
 
@@ -84,6 +69,7 @@ void	create_philos(t_data *data)
 	int	i;
 
 	i = -1;
+	data->philos->id2 = 0;
 	if (data->numb == 1)
 		data->philos->status = lonely;
 	while (++i < data->numb)
